@@ -1,0 +1,38 @@
+CREATE TABLE Branch(
+    Bname varchar(20),
+    Bcity varchar(20),
+    Assets integer,
+    PRIMARY KEY(Bname)
+);
+CREATE TABLE Customer(
+    Cname varchar(20),
+    City varchar(20),
+    Cid integer,
+    PRIMARY KEY(Cid)
+);
+CREATE TABLE Account(
+    AccNo INTEGER,
+    Bname varchar(20),
+    Balance integer,
+    PRIMARY KEY(AccNo),
+    foreign key (Bname) references Branch (Bname)
+);
+CREATE TABLE Depositor(
+    Cid integer,
+    AccNo INTEGER,
+    foreign key (Cid) references Customer (Cid),
+    foreign key (AccNo) references Account (AccNo)
+);
+CREATE TABLE Loan(
+    LoanNo INTEGER,
+    Bname varchar(20),
+    Amount integer,
+    PRIMARY KEY(LoanNo),
+    foreign key (Bname) references Branch (Bname)
+);
+CREATE TABLE Borrower(
+    Cid integer,
+    LoanNo INTEGER,
+    foreign key (Cid) references Customer (Cid),
+    foreign key (LoanNo) references Loan (LoanNo)
+);

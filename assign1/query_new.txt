@@ -1,0 +1,101 @@
+1)
+SELECT Cname
+from Customer as T
+WHERE T.Cid NOT IN (Select S.Cid
+                    from Customer as S, Depositor as X, Depositor AS Y, Account as A, Account as B
+                    WHERE S.Cid = X.Cid and S.Cid = Y.Cid
+                  AND X.AccNo <> Y.AccNo and A.AccNo = X.AccNo
+                  and B.AccNo = Y.AccNo AND A.Bname = 'IIT Kanpur'
+                  and B.Bname = 'IIT Kanpur'
+                  )
+
+
+2)
+Select C.Cname
+from Customer as C
+where NOT EXISTS (select A.Bname
+              from Account as A , Account as B, Depositor as D, Depositor as E
+              Where A.AccNo = D.AccNo AND B.AccNo = E.AccNo
+              and C.Cid = D.Cid and C.Cid = E.Cid 
+              AND A.Bname= B.Bname AND A.AccNo <> B.AccNo)
+
+3)
+Select C.Cname
+from Customer as C
+where not EXISTS (select B.Bname
+                  from Branch as B
+                  where B.Bname NOT IN(
+                  select A.Bname
+                  from Account as A, Depositor as D
+                  WHERE D.Cid = C.Cid
+                  and A.AccNo = D.AccNo
+                  ))
+
+4) Select avg(Balance)
+FROM Account
+where Bname = 'IIT Kanpur';
+
+
+5)
+Select distinct C.Cname
+From Customer C, Depositor D, Borrower B
+where ( C.Cid = D.Cid
+  OR C.Cid = B.Cid)
+  AND C.Cname NOT IN(
+Select C.Cname
+From Customer C, Depositor D, Borrower B
+where C.Cid = D.Cid
+  and C.Cid = B.Cid
+)
+
+
+
+6)
+  Select T.Cname,S.Cname
+  from Customer as T, Customer as S
+  where T.Cid > S.CID AND not EXISTS    (select A.Bname
+                        from Account as A, Depositor as D
+                        WHERE D.Cid = T.Cid
+                        and A.AccNo = D.AccNo and A.Bname not IN
+                        (select A.Bname
+                        from Account as A, Depositor as D
+                        WHERE D.Cid = S.Cid
+                        and A.AccNo = D.AccNo)
+                      )
+                      AND not exists ( 
+                        select A.Bname
+                        from Account as A, Depositor as D
+                        WHERE D.Cid = S.Cid
+                        and A.AccNo = D.AccNo
+                        and A.Bname not IN
+                        (select A.Bname
+                        from Account as A, Depositor as D
+                        WHERE D.Cid = T.Cid
+                        and A.AccNo = D.AccNo)
+                        )
+                      AND not exists (
+                        select L.Bname
+                        from Loan as L, Borrower as B
+                        WHERE B.Cid = T.Cid
+                        and B.LoanNo = L.LoanNo
+                        AND L.Bname NOT IN (select L.Bname
+                        from Loan as L, Borrower as B
+                        WHERE B.Cid = S.Cid
+                        and B.LoanNo = L.LoanNo)
+                      )
+                      AND not exists (
+                        select L.Bname
+                        from Loan as L, Borrower as B
+                        WHERE B.Cid = S.Cid
+                        and B.LoanNo = L.LoanNo
+                        and L.Bname Not IN (select L.Bname
+                        from Loan as L, Borrower as B
+                        WHERE B.Cid = T.Cid
+                        and B.LoanNo = L.LoanNo));
+
+
+7) update Account
+  set Balance = case
+                when Balance > 5000 then Balance*1.1
+                else Balance* 1.05
+                end;
